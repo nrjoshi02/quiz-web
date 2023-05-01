@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Quiz App</title>
+    </head>
+    <body>
+      <h1>Quiz</h1>
+      <form method="post" action="/check-answers">
+        Enter Name: <input type="text" id="Name" name="Name" required>
+        <% questions.forEach(function(question) { %>
+          <h2><%= question.question %></h2>
+          <% for (var i = 0; i < question.choices.length; i++) { %>
+            <label>
+              <input type="radio" name="<%= question.id %>" value="<%= question.choices[i] %>">
+              <%= question.choices[i] %>
+            </label>
+          <% } %>
+        <% }); %>
+        <button type="submit">Submit</button>
+      </form>
+    </body>
+  </html>
+  
+
