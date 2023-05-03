@@ -3,6 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const { LocalStorage } = require('node-localstorage');
+
+
+const localStorage = new LocalStorage('./localStorage');
+
 
 // Create express app
 const app = express();
@@ -38,6 +43,7 @@ const Question = mongoose.model('Question', questionSchema);
 // Set up user response schema
 const responseSchema = new mongoose.Schema({
   Name:String,
+  Email:String,
   // questionId: Number,
   // answer: String
   Score:Number
@@ -46,15 +52,37 @@ const responseSchema = new mongoose.Schema({
 const Response = mongoose.model('Response', responseSchema);
 
 // Set up routes
-app.get('/take-quiz', async (req, res) => {
+
+app.get('/login',async(req,res)=>{
+  res.render('login');
+})
+
+app.post('/take-quiz', async (req, res) => {
+  const Name = req.body.Name;
+  const Email = req.body.Email;
+  localStorage.setItem('user',JSON.stringify({Name,Email}));
+
+
+  
   const questions = await Question.find();
+
+
   res.render('index', { questions });
 });
 
-app.post('/check-answers', async (req, res) => {
-  const answers = req.body;
+app.post('/login',async(req,res)=>{
   const Name = req.body.Name;
-  let score = 0;
+  const Email = req.body.Email;
+  res.redirect('index');
+})
+
+app.post('/check-answers', async (req, res) => {
+  const myValue = JSON.parse(localStorage.getItem('user'));
+
+  const answers = req.body;
+  const getUser = await Response.findOne({Email:myValue.Email});
+  if(!getUser){
+    let score = 0;
 
   // Calculate score
   const questions = await Question.find();
@@ -73,17 +101,24 @@ app.post('/check-answers', async (req, res) => {
 
   // Save user response
   const responses = new Response({
-    Name:Name,
+    Name:myValue.Name,
+    Email:myValue.Email,
     Score:score
   });
   responses.save();
 
   res.render('result', { score, totalQuestions: questions.length });
+  
+  }
+  else{
+    res.render('error');
+    
+  }
+  
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);8
 });
-
