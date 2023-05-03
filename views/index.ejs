@@ -5,11 +5,69 @@
   <html>
     <head>
       <title>Quiz App</title>
+      <style>
+        .timer {
+          position: fixed;
+          top: 0;
+          right: 0;
+          padding: 10px;
+          font-size: 24px;
+          font-weight: bold;
+        }
+      </style>
+      <!-- <script>
+        var remainingTime = parseInt(localStorage.getItem("remainingTime")) || 600;
+        function updateTimer() {
+            remainingTime--;
+            var minutes = Math.floor(remainingTime / 60);
+            var seconds = remainingTime % 60;
+            document.getElementById("timer").innerHTML = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+            // Store the remaining time in Local Storage
+            localStorage.setItem("remainingTime", remainingTime);
+        }
+
+        function loadTimer() {
+            setInterval(updateTimer, 1000);
+        }
+
+        window.onload = loadTimer;
+        window.onbeforeunload = function() {
+            // Store the remaining time in Local Storage before the page is closed or refreshed
+            localStorage.setItem("remainingTime", remainingTime);
+        };
+      </script> -->
+      <script>
+        function preventBack(){
+          window.history.forward();
+
+        }
+        setTimeout("preventBack()",0);
+        window.onunload = function(){null};
+    </script>
     </head>
     <body>
       <h1>Quiz</h1>
-      <form method="post" action="/check-answers">
-        Enter Name: <input type="text" id="Name" name="Name" required>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>var timeLimit = 120; // 2 minutes</script>
+      <script>
+         $(document).ready(function() {
+        var timer = setInterval(function() {
+            timeLimit--;
+            $("#timer").text(timeLimit);
+
+            if (timeLimit <= 0) {
+                clearInterval(timer);
+                $("#myForm").submit();
+            }
+        }, 1000);
+    });
+      </script>
+
+      
+      <div>Time Left: <span id="timer">120</span></div>
+
+      <form id="myForm" method="post" action="/check-answers">
         <% questions.forEach(function(question) { %>
           <h2><%= question.question %></h2>
           <% for (var i = 0; i < question.choices.length; i++) { %>
