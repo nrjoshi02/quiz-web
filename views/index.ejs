@@ -15,28 +15,43 @@
           font-weight: bold;
         }
       </style>
-      <!-- <script>
-        var remainingTime = parseInt(localStorage.getItem("remainingTime")) || 600;
-        function updateTimer() {
-            remainingTime--;
-            var minutes = Math.floor(remainingTime / 60);
-            var seconds = remainingTime % 60;
-            document.getElementById("timer").innerHTML = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-
-            // Store the remaining time in Local Storage
-            localStorage.setItem("remainingTime", remainingTime);
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        if(localStorage.getItem("count_timer")){
+          var count_timer = localStorage.getItem("count_timer");
+        }
+        else{
+          var count_timer = 60;
         }
 
-        function loadTimer() {
-            setInterval(updateTimer, 1000);
+        var minutes = parseInt(count_timer/60);
+        var seconds = parseInt(count_timer%60);
+
+        function countDownTimer(){
+          if(seconds<10){
+            seconds = "0" + seconds;
+          }
+          if(minutes<10){
+            minutes = "0" + minutes;
+          }
+
+          document.getElementById("timer").innerHTML = "Time Left : "+minutes+" Minutes "+seconds+" Seconds";
+
+          if(count_timer <= 0){
+                    localStorage.clear("count_timer");
+                    clearInterval(timer);
+                    $("#myForm").submit();
+         } else {
+        count_timer = count_timer -1 ;
+        minutes = parseInt(count_timer/60);
+        seconds = parseInt(count_timer%60);
+        localStorage.setItem("count_timer",count_timer);
+        setTimeout("countDownTimer()",1000);
+    }
         }
 
-        window.onload = loadTimer;
-        window.onbeforeunload = function() {
-            // Store the remaining time in Local Storage before the page is closed or refreshed
-            localStorage.setItem("remainingTime", remainingTime);
-        };
-      </script> -->
+        setTimeout("countDownTimer()",1000);
+        </script>
       <script>
         function preventBack(){
           window.history.forward();
@@ -48,7 +63,7 @@
     </head>
     <body>
       <h1>Quiz</h1>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>var timeLimit = 120; // 2 minutes</script>
       <script>
          $(document).ready(function() {
@@ -62,10 +77,11 @@
             }
         }, 1000);
     });
-      </script>
+      </script> -->
 
       
-      <div>Time Left: <span id="timer">120</span></div>
+      <!-- <div>Time Left: <span id="timer"></span></div> -->
+      <div id="timer" align="center"> </div>
 
       <form id="myForm" method="post" action="/check-answers">
         <% questions.forEach(function(question) { %>
@@ -81,5 +97,3 @@
       </form>
     </body>
   </html>
-  
-
