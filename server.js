@@ -61,14 +61,12 @@ app.post('/take-quiz', async (req, res) => {
   const Name = req.body.Name;
   const Email = req.body.Email;
   localStorage.setItem('user',JSON.stringify({Name,Email}));
-
-
-  
   const questions = await Question.find();
 
-
-  res.render('index', { questions });
+  const message = 'Welcome ' + Name + '..!';
+  res.render('index', { questions,message });
 });
+
 
 app.post('/login',async(req,res)=>{
   const Name = req.body.Name;
